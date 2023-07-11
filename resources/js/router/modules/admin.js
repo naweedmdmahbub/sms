@@ -43,27 +43,6 @@ const adminRoutes = {
     },
     
     /** Student managements */
-    // {
-    //   path: 'students/view/:id',
-    //   component: () => import('@/views/students/View'),
-    //   name: 'ViewStudent',
-    //   meta: { title: 'viewStudent', permissions: ['view student'] },
-    //   hidden: true,
-    // },
-    // {
-    //   path: 'students/edit/:id',
-    //   component: () => import('@/views/students/Edit'),
-    //   name: 'EditStudent',
-    //   meta: { title: 'editStudent', permissions: ['update student'] },
-    //   hidden: true,
-    // },
-    // {
-    //   path: 'students/create',
-    //   component: () => import('@/views/students/Create'),
-    //   name: 'CreateStudent',
-    //   meta: { title: 'createStudent', permissions: ['add student'] },
-    //   hidden: true,
-    // },
     {
       path: 'students',
       component: () => import('@/views/students/List'),

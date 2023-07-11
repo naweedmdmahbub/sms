@@ -107,9 +107,9 @@ export default {
       await data.append('image', this.student.image);
       for (var key in this.student) {
         data.append(key, this.student[key]);
-        console.log('key:', key, 'this.student[key]:', this.student[key]);
+        // console.log('key:', key, 'this.student[key]:', this.student[key]);
       }
-      console.log('data:', data, this.student);
+      // console.log('data:', data, this.student);
 
       var offset = 0;
       if (this.student.id !== undefined) {

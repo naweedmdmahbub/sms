@@ -47,7 +47,7 @@ class StudentController extends Controller
         // dd($request->all());
         try {
             $input = $request->only('name', 'email', 'number', 'department_id', 'guardian_number');
-            // $input = $request->only('first_name', 'last_name', 'business_name', 'email', 'contact_person', 'contact_no', 'address');
+            DB::beginTransaction();
             $student = Student::create($input);
             if($request->hasFile('image')){
                 $filename = $request->image->getClientOriginalName();
@@ -56,8 +56,10 @@ class StudentController extends Controller
                 $this->createImage($filename,$student);
 //                dd($request->all(), $request->file(), $request->image, $filename, public_path(), $extension, $image_upload_path);
             }
+            DB::commit();
             return new StudentResource($student);
         } catch (Exception $ex) {
+            DB::rollBack();
             return response()->json( new \Illuminate\Support\MessageBag(['catch_exception'=>$ex->getMessage()]), 403);
         }
     }
@@ -85,10 +87,27 @@ class StudentController extends Controller
     {
         // dd($request->all());
         try {
-            $input = $request->only('first_name', 'last_name', 'business_name', 'email', 'contact_person', 'contact_no', 'address');
+            $input = $request->only('name', 'email', 'number', 'department_id', 'guardian_number');
             $student = Student::find($id);
             DB::beginTransaction();
             $student->fill($input)->update();
+            dd($input, $request->all(), $request->hasFile('image'), $student->image);
+            //Only deleting image when new image is selected.
+            // When no new image is selected, image remains the same, that means no delete option for image only.
+            if($request->hasFile('image')){
+                $prev_image =  $student->image;
+                if($prev_image){
+                    $path = public_path('\uploads\students\\').$prev_image->filename;
+                    if(file_exists($path)) {
+                        unlink($path);
+                        $prev_image->delete();
+                    }
+                }
+                $filename = $request->image->getClientOriginalName();
+                $image_upload_path = public_path('\uploads\students');
+                $request->image->move($image_upload_path, $filename);
+                $this->createImage($filename,$student);
+            }
             DB::commit();
             return new StudentResource($student);
         } catch (Exception $ex) {
