@@ -18,7 +18,7 @@
         {{ $t('table.search') }}
       </el-button>
       <el-button
-        v-permission="['add department']"
+        v-permission="['add student']"
         class="filter-item"
         style="margin-left: 10px;"
         type="primary"
@@ -26,16 +26,6 @@
         @click="handleCreate"
       >
         {{ $t('table.add') }}
-      </el-button>
-      <el-button
-        v-waves
-        :loading="downloading"
-        class="filter-item"
-        type="primary"
-        icon="el-icon-download"
-        @click="handleDownload"
-      >
-        {{ $t('table.export') }}
       </el-button>
     </div>
 
@@ -64,23 +54,38 @@
         </template>
       </el-table-column>
 
+      <el-table-column prop="department_name" align="center" sortable label="Department">
+        <template slot-scope="scope">
+          <span>{{ scope.row.department_name }}</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="number" align="center" sortable label="Number">
         <template slot-scope="scope">
           <span>{{ scope.row.number }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="total_credit" align="center" sortable label="Total Credit">
+      <el-table-column prop="guardian_number" align="center" sortable label="Guardian Number">
         <template slot-scope="scope">
-          <span>{{ scope.row.total_credit }}</span>
+          <span>{{ scope.row.guardian_number }}</span>
         </template>
       </el-table-column>
 
+      <el-table-column prop="image" align="center" sortable label="Image">
+        <template slot-scope="scope">
+          <img
+            v-if="scope.row.image !==null"
+            :src="'/uploads/students/' + scope.row.image.filename"
+            width="100"
+            height="100"
+          >
+        </template>
+      </el-table-column>
 
       <el-table-column align="center" label="Actions" width="350">
         <template slot-scope="scope">
           <el-button
-            v-permission="['view department']"
+            v-permission="['view student']"
             type="warning"
             size="small"
             icon="el-icon-view"
@@ -89,7 +94,7 @@
             View
           </el-button>
           <el-button
-            v-permission="['update department']"
+            v-permission="['update student']"
             type="primary"
             size="small"
             icon="el-icon-edit"
@@ -98,7 +103,7 @@
             Edit
           </el-button>
           <el-button
-            v-permission="['manage department']"
+            v-permission="['manage student']"
             type="danger"
             size="small"
             icon="el-icon-delete"
@@ -114,19 +119,19 @@
     <!-- Create Modal -->
     <Create
       ref="createRef"
-      :department="currentDepartment"
+      :student="currentStudent"
       @dismissDialog="dismissDialog"
     />
     <!-- Edit Modal -->
     <Edit
       ref="editRef"
-      :department="currentDepartment"
+      :student="currentStudent"
       @dismissDialog="dismissDialog"
     />
     <!-- Show Modal -->
     <Show
       ref="showRef"
-      :department="currentDepartment"
+      :student="currentStudent"
     />
 
     <pagination 
@@ -149,10 +154,10 @@ import Resource from '@/api/resource';
 import Create from './Create';
 import Edit from './Edit';
 import Show from './Show';
-const departmentResource = new Resource('departments');
+const studentResource = new Resource('students');
 
 export default {
-  name: 'DepartmentList',
+  name: 'StudentList',
   components: { Pagination, Create, Edit, Show },
   directives: { waves, permission },
   data() {
@@ -161,13 +166,14 @@ export default {
       total: 0,
       loading: true,
       downloading: false,
-      formTitle: 'Create Department',
-      currentDepartment: {
+      formTitle: 'Create Student',
+      currentStudent: {
         name: '',
         email: '',
         number: '',
-        total_credit: '',
-        department_head: '',
+        image: null,
+        guardian_number: '',
+        department_id: '',
       },
       query: {
         page: 1,
@@ -182,19 +188,20 @@ export default {
   },
   methods: {
     dismissDialog() {
-      this.currentDepartment = {
+      this.currentStudent = {
         name: '',
         email: '',
         number: '',
-        total_credit: '',
-        department_head: '',
+        image: null,
+        guardian_number: '',
+        department_id: '',
       };
       this.getList();
     },
 
     async getList() {
       this.loading = true;
-      const response = await departmentResource.list(this.query);
+      const response = await studentResource.list(this.query);
       console.log('getList:', response, response.data);
       this.list = response.data;
       this.total = response.meta.total;
@@ -208,22 +215,22 @@ export default {
       this.$refs.createRef.handleCreateModal();
     },
     handleEdit(id){
-      this.currentDepartment = this.list.find(department => department.id === id);
+      this.currentStudent = this.list.find(student => student.id === id);
       this.$refs.editRef.handleEditModal(id);
     },
     handleShow(id){
-      this.currentDepartment = this.list.find(department => department.id === id);
+      this.currentStudent = this.list.find(student => student.id === id);
       this.$refs.showRef.handleShowModal(id);
     },
 
     handleDelete(id, name) {
-      this.$confirm('This will permanently delete department ' + name + '. Continue?', 'Warning', {
+      this.$confirm('This will permanently delete student ' + name + '. Continue?', 'Warning', {
         confirmButtonText: 'OK',
         cancelButtonText: 'Cancel',
         type: 'warning',
       }).then(() => {
         axios
-          .delete('api/departments/'+id)
+          .delete('api/students/'+id)
           .then(response => {
             this.$message({
               type: 'success',
@@ -239,25 +246,6 @@ export default {
           message: 'Delete canceled',
         });
       });
-    },
-
-
-    handleDownload() {
-      this.downloading = true;
-      import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['id', 'name', 'email', 'number', 'total_credit', 'department_head'];
-        const filterVal = ['id', 'name', 'email', 'number', 'total_credit', 'department_head'];
-        const data = this.formatJson(filterVal, this.list);
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: 'department-list',
-        });
-        this.downloading = false;
-      });
-    },
-    formatJson(filterVal, jsonData) {
-      return jsonData.map(v => filterVal.map(j => v[j]));
     },
   },
 };

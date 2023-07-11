@@ -10,14 +10,18 @@ class Student extends Model
 {
     use HasFactory, LogsActivity;
     protected $guard_name = 'api';
-    protected $fillable = ['first_name', 'last_name', 'business_name', 'email', 'contact_person', 'contact_no', 'address', 'website'];
+    protected $fillable = ['name', 'email', 'number', 'department_id', 'guardian_number'];
     public function image()
     {
         return $this->morphOne(Image::class, 'imageable');
     }
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
+    }
     
     // Activity Logs begins
-    protected static $logAttributes = ['first_name', 'last_name', 'business_name', 'email', 'contact_person', 'contact_no', 'address', 'website'];
+    protected static $logAttributes = ['name', 'email', 'number', 'department_id', 'guardian_number'];
     protected static $logOnlyDirty = true;
     public function getDescriptionForEvent(string $eventName): string
     {

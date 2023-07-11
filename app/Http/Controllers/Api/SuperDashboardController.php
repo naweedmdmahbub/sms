@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Laravue\Models\Department;
+use App\Laravue\Models\Student;
 use Illuminate\Http\Request;
 
 class SuperDashboardController extends Controller
@@ -16,5 +18,18 @@ class SuperDashboardController extends Controller
             array_push($models, $mdl);
         }
         return $models;
+    }
+
+    
+    public function getDashboardData()
+    {
+        $students = Student::count();
+        $departments = Department::count();
+        $department_students = Department::withCount('students')->get();
+        return [
+            'students' => $students,
+            'departments' => $departments,
+            'department_students' => $department_students,
+        ];
     }
 }

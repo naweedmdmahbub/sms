@@ -42,19 +42,11 @@ Route::namespace('Api')->group(function() {
 
 
         Route::apiResource('students', 'StudentController');
-        Route::apiResource('suppliers', 'SupplierController');
-        Route::apiResource('subcontractors', 'SubcontractorController');
         // Inventory routes
         Route::apiResource('departments', 'DepartmentController');
-        Route::apiResource('units', 'UnitController');
-        Route::apiResource('categories', 'CategoryController');
-
-        // Project routes
-        Route::apiResource('projects', 'ProjectController');
-        Route::apiResource('structureTypes', 'StructureTypeController');
-        Route::apiResource('structures', 'StructureController');
-
+        
         Route::post('get-model-data/', 'SuperDashboardController@getModelData');
+        Route::get('get-dashboard-data/', 'SuperDashboardController@getDashboardData');
     });
 });
 

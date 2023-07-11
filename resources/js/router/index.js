@@ -13,7 +13,7 @@ Vue.use(Router);
 import Layout from '@/layout';
 
 /* Router for modules */
-import inventoryRoutes from './modules/inventory';
+// import inventoryRoutes from './modules/inventory';
 import adminRoutes from './modules/admin';
 import permissionRoutes from './modules/permission';
 
@@ -104,26 +104,6 @@ export const constantRoutes = [
 export const asyncRoutes = [
   permissionRoutes,
   adminRoutes,
-  inventoryRoutes,
-  {
-    path: '/pdf',
-    component: Layout,
-    redirect: '/pdf/index',
-    meta: { title: 'pdf', icon: 'pdf', permissions: ['view menu pdf'] },
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/pdf'),
-        name: 'Pdf',
-        meta: { title: 'pdf' },
-      },
-    ],
-  },
-  {
-    path: '/pdf/download',
-    component: () => import('@/views/pdf/Download'),
-    hidden: true,
-  },
   { path: '*', redirect: '/404', hidden: true },
 ];
 

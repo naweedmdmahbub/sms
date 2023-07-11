@@ -24,11 +24,9 @@ class StudentStoreUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'business_name' => 'required',
-            'contact_person' => 'required',
+            'name' => 'required',
             'email' => 'nullable|email',
+            'department_id' => 'required|numeric',
         ];
     }
 }

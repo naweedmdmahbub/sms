@@ -103,15 +103,7 @@ export default {
           })
           .catch(error => {
             console.log('error:', error);
-            this.errors = error.response.data.errors;
-            Object.entries(this.errors).forEach(([key, value]) => {
-              this.$notify.error({
-                title: 'Error',
-                message: value[0],
-                offset: offset,
-              });
-              offset += 60;
-            });
+            showErrors(error);
           });
       } else {
         axios
@@ -125,27 +117,9 @@ export default {
             this.dismissDialog();
           })
           .catch(error => {
-            this.errors = error.response.data.errors;
-            var offset = 0;
-            Object.entries(this.errors).forEach(([key, value]) => {
-              this.$notify.error({
-                title: 'Error',
-                message: value[0],
-                offset: offset,
-              });
-              offset += 60;
-            });
+            showErrors(error);
           });
       }
-    },
-    
-    onFileChange(event){
-        this.department.image = event.target.files[0];
-        this.imageUrl = URL.createObjectURL(this.department.image);
-        console.log('onFileChange: ', event.target.files);
-        console.log('this.department.image: ', this.department.image);
-        console.log('imageUrl: ', this.imageUrl);
-        // this.imageUrl = event.target.files[0].name;
     },
   }
 };

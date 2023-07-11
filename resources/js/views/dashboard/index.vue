@@ -23,7 +23,8 @@ export default {
     ]),
   },
   created() {
-    if (!this.roles.includes('admin')) {
+    console.log('this.roles in editor/index/dashboard', this.roles);
+    if (!this.roles.includes('admin') && !this.roles.includes('manager')) {
       this.currentRole = 'editorDashboard';
     }
   },

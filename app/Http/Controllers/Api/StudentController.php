@@ -25,7 +25,7 @@ class StudentController extends Controller
     public function index(Request $request)
     {
         $searchParams = $request->all();
-        $studentQuery = Student::query();
+        $studentQuery = Student::with('department', 'image');
         $limit = Arr::get($searchParams, 'limit', static::ITEM_PER_PAGE);
         $keyword = Arr::get($searchParams, 'keyword', '');
 
@@ -46,13 +46,18 @@ class StudentController extends Controller
     {
         // dd($request->all());
         try {
-            $input = $request->only('first_name', 'last_name', 'business_name', 'email', 'contact_person', 'contact_no', 'address');
-            DB::beginTransaction();
+            $input = $request->only('name', 'email', 'number', 'department_id', 'guardian_number');
+            // $input = $request->only('first_name', 'last_name', 'business_name', 'email', 'contact_person', 'contact_no', 'address');
             $student = Student::create($input);
-            DB::commit();
+            if($request->hasFile('image')){
+                $filename = $request->image->getClientOriginalName();
+                $image_upload_path = public_path('\uploads\students');
+                $request->image->move($image_upload_path, $filename);
+                $this->createImage($filename,$student);
+//                dd($request->all(), $request->file(), $request->image, $filename, public_path(), $extension, $image_upload_path);
+            }
             return new StudentResource($student);
         } catch (Exception $ex) {
-            DB::rollBack();
             return response()->json( new \Illuminate\Support\MessageBag(['catch_exception'=>$ex->getMessage()]), 403);
         }
     }
@@ -102,6 +107,14 @@ class StudentController extends Controller
     {
         try {
             $student = Student::find($id);
+            $image =  $student->image;
+            if($image){
+                $path = public_path('\uploads\students\\').$image->filename;
+                if(file_exists($path)) {
+                    unlink($path);
+                    $image->delete();
+                }
+            }
             $student->delete();
             return response()->json(null, 204);
         } catch (\Exception $ex) {

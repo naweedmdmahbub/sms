@@ -12,6 +12,10 @@ class Department extends Model
     protected $guard_name = 'api';
     protected $fillable = ['name', 'email', 'number', 'total_credit', 'department_head'];
 
+    public function students(){
+        return $this->hasMany(Student::class);
+    }
+
     // Activity Logs
     protected static $logAttributes = ['name', 'email', 'number', 'total_credit', 'department_head'];
     protected static $logOnlyDirty = true;

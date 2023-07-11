@@ -6,7 +6,7 @@
     >
       <form-component
         v-if="isMounted"
-        :department="department"
+        :student="student"
         mode="edit"
         @dismissDialog="dismissDialog"
       />
@@ -18,12 +18,12 @@
 import FormComponent from './FormComponent';
 export default {
   components: { FormComponent },
-  props: ['department'],
+  props: ['student'],
   data() {
     return {
       loading: true,
       downloading: false,
-      formTitle: 'Edit Department',
+      formTitle: 'Edit Student',
       dialogFormVisible: false,
       isMounted: false,
     };

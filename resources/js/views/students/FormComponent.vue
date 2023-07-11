@@ -1,48 +1,53 @@
 <template>
   <div class="form-container">
     <el-form
-      ref="departmentForm"
-      :model="department"
+      ref="studentForm"
+      :model="student"
       label-position="left"
       label-width="150px"
       style="max-width: 500px;"
     >
       <el-form-item label="Name" prop="name">
         <el-input
-          v-model="department.name"
+          v-model="student.name"
           :disabled="mode == 'show'"
         />
+      </el-form-item>
+      <el-form-item label="Department" prop="department_id">
+        <el-select v-model="selectedDepartmentID" placeholder="Please Select Department" :disabled="mode === 'view'" width="100%">
+            <el-option v-for="department in departments"
+                      :key="department.id"
+                      :label="department.name"
+                      :value="department.id" />
+        </el-select>
       </el-form-item>
       <el-form-item label="Number" prop="number">
         <el-input
-          v-model="department.number"
+          v-model="student.number"
           :disabled="mode == 'show'"
         />
       </el-form-item>
-      <el-form-item label="Total Credit" prop="total_credit">
-        
-      <!-- <el-input-number v-model="department.total_credit" controls-position="right" @change="handleChange">
-
-      </el-input-number> -->
-        <el-input-number
-          v-model="department.total_credit"
-          style="width:100%;"
-          :disabled="mode == 'show'"
-          controls-position="right"
-        />
-      </el-form-item>
-      <el-form-item label="Department Head" prop="department_head">
+      <el-form-item label="Guardian Number" prop="guardian_number">
         <el-input
-          v-model="department.department_head"
+          v-model="student.guardian_number"
           :disabled="mode == 'show'"
         />
       </el-form-item>
       <el-form-item label="Email" prop="email">
         <el-input
-          v-model="department.email"
-          type="email"
+          v-model="student.email"
           :disabled="mode == 'show'"
         />
+      </el-form-item>
+      
+      
+      <el-form-item label="Image" prop="image">
+        <img v-if="student.image !==null && student.image.id"
+            :src="'/uploads/students/' + student.image.filename"
+            width="100"
+            height="100"
+        >
+        <input type="file" @change="onFileChange">
       </el-form-item>
       
     </el-form>
@@ -66,84 +71,84 @@
 
 <script>
 import axios from 'axios';
+import { showErrors } from '@/utils/helper.js'
 export default {
-  props: ['mode', 'department'],
+  props: ['mode', 'student'],
   data() {
     return {
       loading: true,
       downloading: false,
+      selectedDepartmentID: null,
       errors: [],
+      departments: [],
+      imageUrl: '',
     };
+  },
+  async mounted(){
+    await axios.get('/api/departments').then((res) => {
+      this.departments = res.data.data;
+      console.log('mounted', this.departments);
+    });
+    if (this.mode !== 'create'){
+      // axios.get('/api/student').then((res) =>){
+      //   this.student
+      // }
+      this.selectedDepartmentID = this.student.department_id;
+    }
   },
   methods: {
     dismissDialog() {
       this.$emit('dismissDialog');
     },
     async handleSubmit() {
+      this.student.department_id = this.selectedDepartmentID;
       this.errors = [];
       let data = new FormData();
-      await data.append('image', this.department.image);
-      for (var key in this.department) {
-        data.append(key, this.department[key]);
+      await data.append('image', this.student.image);
+      for (var key in this.student) {
+        data.append(key, this.student[key]);
+        console.log('key:', key, 'this.student[key]:', this.student[key]);
       }
-      console.log('data:', data, this.department);
-
+      console.log('data:', data, this.student);
 
       var offset = 0;
-      if (this.department.id !== undefined) {
+      if (this.student.id !== undefined) {
         axios
-          .put('api/departments/'+this.department.id, this.department)
+          .put('api/students/'+this.student.id, this.student)
           .then(response => {
             this.$message({
               type: 'success',
-              message: 'Department info has been updated successfully',
+              message: 'Student info has been updated successfully',
               duration: 5 * 1000,
             });
             this.dismissDialog();
           })
           .catch(error => {
             console.log('error:', error);
-            this.errors = error.response.data.errors;
-            Object.entries(this.errors).forEach(([key, value]) => {
-              this.$notify.error({
-                title: 'Error',
-                message: value[0],
-                offset: offset,
-              });
-              offset += 60;
-            });
+            showErrors(error);
           });
       } else {
         axios
-          .post('api/departments', data)
+          .post('api/students', data)
           .then(response => {
             this.$message({
-              message: 'New department ' + this.department.name + ' has been created successfully.',
+              message: 'New student ' + this.student.name + ' has been created successfully.',
               type: 'success',
               duration: 5 * 1000,
             });
             this.dismissDialog();
           })
           .catch(error => {
-            this.errors = error.response.data.errors;
-            var offset = 0;
-            Object.entries(this.errors).forEach(([key, value]) => {
-              this.$notify.error({
-                title: 'Error',
-                message: value[0],
-                offset: offset,
-              });
-              offset += 60;
-            });
+            showErrors(error);
           });
       }
     },
     
     onFileChange(event){
-        this.department.image = event.target.files[0];
-        this.imageUrl = URL.createObjectURL(this.department.image);
+        this.student.image = event.target.files[0];
+        this.imageUrl = URL.createObjectURL(this.student.image);
         console.log('onFileChange: ', event.target.files);
-        console.log('this.department.image: ', this.department.image);
+        console.log('this.student.image: ', this.student.image);
         console.log('imageUrl: ', this.imageUrl);
         // this.imageUrl = event.target.files[0].name;
     },
