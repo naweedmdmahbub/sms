@@ -2,7 +2,7 @@
   <div class="dashboard-editor-container">
     <github-corner style="position: absolute; top: 0px; border: 0; right: 0;" />
 
-    <panel-group  :departments="departments" :students="students" />
+    <panel-group :departments="departments" :students="students" />
 
     <el-row :gutter="8">
       <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 24}" :lg="{span: 24}" :xl="{span: 24}" style="padding-right:8px;margin-bottom:30px;">
@@ -16,6 +16,7 @@
 import GithubCorner from '@/components/GithubCorner';
 import PanelGroup from './components/PanelGroup';
 import TransactionTable from './components/TransactionTable';
+import axios from 'axios';
 
 export default {
   name: 'DashboardAdmin',

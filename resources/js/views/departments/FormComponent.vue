@@ -66,6 +66,7 @@
 
 <script>
 import axios from 'axios';
+import { showErrors } from '@/utils/helper.js'
 export default {
   props: ['mode', 'department'],
   data() {
@@ -88,8 +89,6 @@ export default {
       }
       console.log('data:', data, this.department);
 
-
-      var offset = 0;
       if (this.department.id !== undefined) {
         axios
           .put('api/departments/'+this.department.id, this.department)
