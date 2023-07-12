@@ -44,6 +44,7 @@ Route::namespace('Api')->group(function() {
         Route::apiResource('students', 'StudentController');
         Route::apiResource('departments', 'DepartmentController');
         Route::get('semesters/students/{semester_id}', 'SemesterController@getStudents');
+        Route::post('semesters/students/{semester_id}', 'SemesterController@assignStudents');
         Route::apiResource('semesters', 'SemesterController');
 
         Route::post('get-model-data/', 'SuperDashboardController@getModelData');

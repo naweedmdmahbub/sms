@@ -95,6 +95,18 @@
           >
             Assign Students
           </el-button>
+          
+          <!-- <router-link v-if="!scope.row.roles.includes('admin')" :to="'/administrator/users/edit/'+scope.row.id">
+            <el-button
+              v-permission="['update semester']"
+              type="success"
+              size="small"
+              icon="el-icon-edit"
+              @click="handleAssign(scope.row.id);"
+            >
+              Assign Students
+            </el-button>
+          </router-link> -->
         </template>
       </el-table-column>
 
@@ -107,6 +119,7 @@
         :visible.sync="dialogFormVisible"
       >
         <form-component
+          v-if="dialogFormVisible"
           :semester="currentSemester"
           :mode="mode"
           @dismissDialog="dismissDialog"
@@ -119,6 +132,7 @@
         :visible.sync="dialogAssignStudentVisible"
       >
         <assign-student-form
+          v-if="dialogAssignStudentVisible"
           :semester="currentSemester"
           :mode="mode"
           @dismissDialog="dismissDialog"
@@ -185,6 +199,7 @@ export default {
         name: '',
         year: '',
       };
+      console.log('dismissDialog');
       this.getList();
     },
 
@@ -220,11 +235,11 @@ export default {
       this.formTitle = 'Show Semester';
       this.dialogFormVisible = true;
     },
-    async handleAssign(id){
+    handleAssign(id){
       this.currentSemester = this.list.find(semester => semester.id === id);
       console.log('currentSemester', this.currentSemester);
-      // this.mode = 'show';
       this.formTitle = 'Assign Students';
+      // this.mode = 'show';
       this.dialogAssignStudentVisible = true;
     },
     

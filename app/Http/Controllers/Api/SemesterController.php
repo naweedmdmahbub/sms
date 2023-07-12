@@ -99,10 +99,28 @@ class SemesterController extends Controller
         }
     }
 
-    public function getStudents()
+    public function getStudents($id)
     {
         $all_students = Student::select('id', 'name')->get();
-        return response()->json($all_students);
+        $semester_student_ids = Semester::find($id)->students->pluck('id');
+        $result = [
+            'all_students' => $all_students,
+            'semester_student_ids' => $semester_student_ids
+        ];
+        return response()->json($result);
         // $semester_students = Student::select('id', 'name')->get();
+    }
+
+    public function assignStudents(Request $request)
+    {
+        $semester = Semester::with('students')->find($request->id);
+        // dd($request->all(), $semester);
+        $students = $semester->students()->sync($request->students);
+        $all_students = Student::select('id', 'name')->get();
+        $result = [
+            'all_students' => $all_students,
+            'students' => $students
+        ];
+        return response()->json($result);
     }
 }

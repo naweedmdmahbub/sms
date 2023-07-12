@@ -15,14 +15,13 @@
       </el-form-item>
 
 
-      <el-form-item label="Year" prop="year">
+      <el-form-item label="Students" prop="students">
         <el-select v-model="selectedStudents" multiple filterable placeholder="Select">
           <el-option
             v-for="item in all_students"
             :key="item.id"
             :label="item.name"
-            :value="item.id">
-          </el-option>
+            :value="item.id" />
         </el-select>
       </el-form-item>
 
@@ -63,17 +62,15 @@ export default {
   async mounted(){
       await axios.get('api/semesters/students/'+ this.semester.id)
                   .then(response => {
-                    this.all_students = response.data;
-                    console.log('semester-students', response, this.all_students);
-                    this.dismissDialog();
+                    this.all_students = response.data.all_students;
+                    this.selectedStudents = response.data.semester_student_ids;
+                    // console.log('semester-students', response, this.all_students);
                   })
                   .catch(error => {
                     console.log('error', error);
                     showErrors(error);
                   });
-      this.semester.students = [];
-
-    console.log('mounted in AssignStudent');
+    // console.log('mounted in AssignStudent');
   },
   methods: {
     dismissDialog() {
@@ -81,36 +78,22 @@ export default {
     },
     async handleSubmit() {
       this.errors = [];
-      if (this.semester.id !== undefined) {
-        axios
-          .put('api/semesters/'+this.semester.id, this.semester)
-          .then(response => {
-            this.$message({
-              type: 'success',
-              message: 'Semester info has been updated successfully',
-              duration: 5 * 1000,
-            });
-            this.dismissDialog();
-          })
-          .catch(error => {
-            console.log('error:', error);
-            showErrors(error);
+      this.semester.students = this.selectedStudents;
+      // console.log('handleSubmit', this.selectedStudents, this.semester);
+      axios
+        .post('api/semesters/students/'+this.semester.id, this.semester)
+        .then(response => {
+          console.log('response: ', response.data)
+          this.$message({
+            message: 'Students assigned to ' + this.semester.name,
+            type: 'success',
+            duration: 5 * 1000,
           });
-      } else {
-        axios
-          .post('api/semesters', this.semester)
-          .then(response => {
-            this.$message({
-              message: 'New semester ' + this.semester.name + ' has been created successfully.',
-              type: 'success',
-              duration: 5 * 1000,
-            });
-            this.dismissDialog();
-          })
-          .catch(error => {
-            showErrors(error);
-          });
-      }
+          this.dismissDialog();
+        })
+        .catch(error => {
+          showErrors(error);
+        });
     },
   }
 };
