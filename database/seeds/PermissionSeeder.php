@@ -37,17 +37,23 @@ class PermissionSeeder extends Seeder
             ['name' =>  'update user', 'guard_name' => 'api', 'permission_prefix_id' => '3'],
             ['name' =>  'view user', 'guard_name' => 'api', 'permission_prefix_id' => '3'],
             // students permissions
-            ['name' =>  'manage student', 'guard_name' => 'api', 'permission_prefix_id' => '6'],
-            ['name' =>  'view student list', 'guard_name' => 'api', 'permission_prefix_id' => '6'],
-            ['name' =>  'add student', 'guard_name' => 'api', 'permission_prefix_id' => '6'],
-            ['name' =>  'update student', 'guard_name' => 'api', 'permission_prefix_id' => '6'],
-            ['name' =>  'view student', 'guard_name' => 'api', 'permission_prefix_id' => '6'],
+            ['name' =>  'manage student', 'guard_name' => 'api', 'permission_prefix_id' => '4'],
+            ['name' =>  'view student list', 'guard_name' => 'api', 'permission_prefix_id' => '4'],
+            ['name' =>  'add student', 'guard_name' => 'api', 'permission_prefix_id' => '4'],
+            ['name' =>  'update student', 'guard_name' => 'api', 'permission_prefix_id' => '4'],
+            ['name' =>  'view student', 'guard_name' => 'api', 'permission_prefix_id' => '4'],
             // departments permissions
-            ['name' =>  'manage department', 'guard_name' => 'api', 'permission_prefix_id' => '7'],
-            ['name' =>  'view department list', 'guard_name' => 'api', 'permission_prefix_id' => '7'],
-            ['name' =>  'add department', 'guard_name' => 'api', 'permission_prefix_id' => '7'],
-            ['name' =>  'update department', 'guard_name' => 'api', 'permission_prefix_id' => '7'],
-            ['name' =>  'view department', 'guard_name' => 'api', 'permission_prefix_id' => '7'],
+            ['name' =>  'manage department', 'guard_name' => 'api', 'permission_prefix_id' => '5'],
+            ['name' =>  'view department list', 'guard_name' => 'api', 'permission_prefix_id' => '5'],
+            ['name' =>  'add department', 'guard_name' => 'api', 'permission_prefix_id' => '5'],
+            ['name' =>  'update department', 'guard_name' => 'api', 'permission_prefix_id' => '5'],
+            ['name' =>  'view department', 'guard_name' => 'api', 'permission_prefix_id' => '5'],
+            // semesters permissions
+            ['name' =>  'manage semester', 'guard_name' => 'api', 'permission_prefix_id' => '6'],
+            ['name' =>  'view semester list', 'guard_name' => 'api', 'permission_prefix_id' => '6'],
+            ['name' =>  'add semester', 'guard_name' => 'api', 'permission_prefix_id' => '6'],
+            ['name' =>  'update semester', 'guard_name' => 'api', 'permission_prefix_id' => '6'],
+            ['name' =>  'view semester', 'guard_name' => 'api', 'permission_prefix_id' => '6'],
         ];
 
         DB::table('permissions')->insert($permissions);

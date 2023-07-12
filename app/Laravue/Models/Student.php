@@ -19,6 +19,10 @@ class Student extends Model
     {
         return $this->belongsTo(Department::class);
     }
+    public function semesters()
+    {
+        return $this->belongsToMany(Semester::class);
+    }
     
     // Activity Logs begins
     protected static $logAttributes = ['name', 'email', 'number', 'department_id', 'guardian_number'];

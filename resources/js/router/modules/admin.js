@@ -49,6 +49,13 @@ const adminRoutes = {
       name: 'StudentList',
       meta: { title: 'students', noCache: true, icon: 'list', permissions: ['view student list'] },
     },
+    /** Semester managements */
+    {
+      path: 'semesters',
+      component: () => import('@/views/semesters/List'),
+      name: 'SemesterList',
+      meta: { title: 'semesters', noCache: true, icon: 'list', permissions: ['view semester list'] },
+    },
 
   ],
 };

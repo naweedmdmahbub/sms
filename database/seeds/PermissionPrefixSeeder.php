@@ -20,6 +20,7 @@ class PermissionPrefixSeeder extends Seeder
             ['name' => 'user'],
             ['name' => 'student'],
             ['name' => 'department'],
+            ['name' => 'semester'],
         ];
 
         DB::table('permission_prefixes')->insert($permission_prefixes);
