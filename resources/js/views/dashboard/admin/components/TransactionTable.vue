@@ -1,6 +1,6 @@
 <template>
   <el-table
-    :data="department_students"
+    :data="departmentStudents"
     style="width: 100%;padding-top: 15px;"
   >
     <el-table-column label="Department" min-width="200">
@@ -18,6 +18,6 @@
 
 <script>
 export default {
-  props: ['department_students'],
+  props: ['departmentStudents'],
 };
 </script>

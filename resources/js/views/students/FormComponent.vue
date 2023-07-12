@@ -111,7 +111,6 @@ export default {
       }
       // console.log('data:', data, this.student);
 
-      var offset = 0;
       if (this.student.id !== undefined) {
         axios
           .put('api/students/'+this.student.id, this.student)
