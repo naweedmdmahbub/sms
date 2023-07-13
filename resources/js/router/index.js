@@ -53,6 +53,12 @@ export const constantRoutes = [
     ],
   },
   {
+    path: '/student-registration',
+    name: 'StudentRegistration',
+    component: () => import('@/views/register/index'),
+    hidden: true,
+  },
+  {
     path: '/login',
     component: () => import('@/views/login/index'),
     hidden: true,

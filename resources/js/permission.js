@@ -8,7 +8,7 @@ import getPageTitle from '@/utils/get-page-title';
 
 NProgress.configure({ showSpinner: false }); // NProgress Configuration
 
-const whiteList = ['/login', '/auth-redirect']; // no redirect whitelist
+const whiteList = ['/login', '/auth-redirect', '/student-registration']; // no redirect whitelist
 
 router.beforeEach(async(to, from, next) => {
   // start progress bar
@@ -18,9 +18,9 @@ router.beforeEach(async(to, from, next) => {
 
   // determine whether the user has logged in
   const isUserLogged = isLogged();
-
+  console.log('isUserLogged', isUserLogged);
   if (isUserLogged) {
-    if (to.path === '/login') {
+    if (to.path === '/login' || to.path === '/student-registration') {
       // if is logged in, redirect to the home page
       next({ path: '/' });
       NProgress.done();
@@ -54,11 +54,14 @@ router.beforeEach(async(to, from, next) => {
   } else {
     /* has no token*/
 
+    // console.log('to', to);
     if (whiteList.indexOf(to.matched[0] ? to.matched[0].path : '') !== -1) {
+      // console.log('whiteList', to);
       // in the free login whitelist, go directly
       next();
     } else {
       // other pages that do not have permission to access are redirected to the login page.
+      // console.log('to.path', to.path);
       next(`/login?redirect=${to.path}`);
       NProgress.done();
     }

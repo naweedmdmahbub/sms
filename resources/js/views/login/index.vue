@@ -33,8 +33,8 @@
         </el-button>
       </el-form-item>
       <div class="tips">
-        <span style="margin-right:20px;">Email: admin@laravue.dev</span>
-        <span>Password: laravue</span>
+        <span style="margin-right:20px;">Want to register as a student?</span>
+        <el-button @click="handleStudentRegistration">Click Here</el-button>
       </div>
     </el-form>
   </div>
@@ -82,6 +82,7 @@ export default {
     $route: {
       handler: function(route) {
         const query = route.query;
+        console.log('query', query);
         if (query) {
           this.redirect = query.redirect;
           this.otherQuery = this.getOtherQuery(query);
@@ -105,7 +106,7 @@ export default {
           csrf().then(() => {
             this.$store.dispatch('user/login', this.loginForm)
               .then(() => {
-                this.$router.push({ path: this.redirect || '/', query: this.otherQuery }, onAbort => {});
+                // this.$router.push({ path: this.redirect || '/', query: this.otherQuery }, onAbort => {});
                 this.loading = false;
               })
               .catch(() => {
@@ -117,6 +118,10 @@ export default {
           return false;
         }
       });
+    },
+    handleStudentRegistration(){
+      console.log('handleStudentRegistration');
+      this.$router.push({ path: '/student-registration' })
     },
     getOtherQuery(query) {
       return Object.keys(query).reduce((acc, cur) => {
