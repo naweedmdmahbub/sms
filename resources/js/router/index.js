@@ -13,7 +13,6 @@ Vue.use(Router);
 import Layout from '@/layout';
 
 /* Router for modules */
-// import inventoryRoutes from './modules/inventory';
 import adminRoutes from './modules/admin';
 import permissionRoutes from './modules/permission';
 
@@ -82,7 +81,7 @@ export const constantRoutes = [
         path: 'dashboard',
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
-        meta: { title: 'dashboard', icon: 'dashboard', noCache: false },
+        meta: { title: 'dashboard', icon: 'dashboard', noCache: true },
       },
     ],
   },
