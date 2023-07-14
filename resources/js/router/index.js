@@ -13,7 +13,6 @@ Vue.use(Router);
 import Layout from '@/layout';
 
 /* Router for modules */
-// import inventoryRoutes from './modules/inventory';
 import adminRoutes from './modules/admin';
 import permissionRoutes from './modules/permission';
 
