@@ -20,7 +20,7 @@ class StudentResource extends JsonResource
             'email' => $this->email,
             'number' => $this->number,
             'department_id' => $this->department_id,
-            'department_name' => $this->department->name,
+            'department_name' => $this->department ? $this->department->name : null,
             'guardian_number' => $this->guardian_number,
             'image' => $this->image,
         ];
