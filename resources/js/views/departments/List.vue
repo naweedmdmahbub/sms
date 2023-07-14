@@ -27,16 +27,6 @@
       >
         {{ $t('table.add') }}
       </el-button>
-      <el-button
-        v-waves
-        :loading="downloading"
-        class="filter-item"
-        type="primary"
-        icon="el-icon-download"
-        @click="handleDownload"
-      >
-        {{ $t('table.export') }}
-      </el-button>
     </div>
 
     <el-table
@@ -239,25 +229,6 @@ export default {
           message: 'Delete canceled',
         });
       });
-    },
-
-
-    handleDownload() {
-      this.downloading = true;
-      import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['id', 'name', 'email', 'number', 'total_credit', 'department_head'];
-        const filterVal = ['id', 'name', 'email', 'number', 'total_credit', 'department_head'];
-        const data = this.formatJson(filterVal, this.list);
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: 'department-list',
-        });
-        this.downloading = false;
-      });
-    },
-    formatJson(filterVal, jsonData) {
-      return jsonData.map(v => filterVal.map(j => v[j]));
     },
   },
 };
