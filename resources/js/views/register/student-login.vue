@@ -1,89 +1,76 @@
 <template>
-  <div class="register-container">
-    <el-form ref="registerForm" class="register-form" label-position="left">
+  <div class="login-container">
+    <el-form ref="loginForm" :model="loginForm" class="login-form" auto-complete="on" label-position="left">
       <h3 class="title">
-        Register
+        Login Form for Student
       </h3>
       <lang-select class="set-language" />
-      <el-form-item prop="name">
-        <span class="svg-container"><svg-icon icon-class="user" /></span>
-        <el-input v-model="registerForm.name" name="name" type="text" placeholder="Name" />
-      </el-form-item>
-
       <el-form-item prop="email">
-        <span class="svg-container"><svg-icon icon-class="user" /></span>
-        <el-input v-model="registerForm.email" name="email" type="text" placeholder="Email" />
+        <span class="svg-container">
+          <svg-icon icon-class="user" />
+        </span>
+        <el-input v-model="loginForm.email" name="email" type="text" auto-complete="on" :placeholder="$t('login.email')" />
       </el-form-item>
-
       <el-form-item prop="password">
-        <span class="svg-container"><svg-icon icon-class="password" /></span>
+        <span class="svg-container">
+          <svg-icon icon-class="password" />
+        </span>
         <el-input
-          v-model="registerForm.password"
+          v-model="loginForm.password"
           :type="pwdType"
           name="password"
-          placeholder="Password"
-          @keyup.enter.native="handleRegister"
+          auto-complete="on"
+          placeholder="password"
+          @keyup.enter.native="handleLogin"
         />
         <span class="show-pwd" @click="showPwd">
           <svg-icon icon-class="eye" />
         </span>
       </el-form-item>
-
-      <el-form-item prop="password_confirmation">
-        <span class="svg-container"><svg-icon icon-class="password" /></span>
-        <el-input
-          v-model="registerForm.password_confirmation"
-          :type="pwdType"
-          name="password_confirmation"
-          placeholder="Confirm Password"
-          @keyup.enter.native="handleRegister"
-        />
-        <span class="show-pwd" @click="showPwd">
-          <svg-icon icon-class="eye" />
-        </span>
-      </el-form-item>
-
       <el-form-item>
-        <el-button :loading="loading" type="primary" style="width:100%;" @click.native.prevent="handleRegister">
-          Register
+        <el-button :loading="loading" type="primary" style="width:100%;" @click.native.prevent="handleLogin">
+          Sign in
         </el-button>
       </el-form-item>
+      <div class="tips">
+        <span style="margin-right:20px;">Want to register as a student?</span>
+        <el-button @click="handleStudentRegistration">Click Here</el-button>
+      </div>
     </el-form>
   </div>
 </template>
 
-
 <script>
 import LangSelect from '@/components/LangSelect';
-import axios from 'axios';
-import { showErrors } from '@/utils/helper.js'
-// import { validEmail } from '@/utils/validate';
-// import { csrf } from '@/api/auth';
+import { validEmail } from '@/utils/validate';
+import { csrf } from '@/api/auth';
 
 export default {
-  name: 'StudentRegistration',
+  name: 'Login',
   components: { LangSelect },
   data() {
-    // const validateEmail = (rule, value, callback) => {
-    //   if (!validEmail(value)) {
-    //     callback(new Error('Please enter the correct email'));
-    //   } else {
-    //     callback();
-    //   }
-    // };
-    // const validatePass = (rule, value, callback) => {
-    //   if (value.length < 4) {
-    //     callback(new Error('Password cannot be less than 4 digits'));
-    //   } else {
-    //     callback();
-    //   }
-    // };
+    const validateEmail = (rule, value, callback) => {
+      if (!validEmail(value)) {
+        callback(new Error('Please enter the correct email'));
+      } else {
+        callback();
+      }
+    };
+    const validatePass = (rule, value, callback) => {
+      if (value.length < 4) {
+        callback(new Error('Password cannot be less than 4 digits'));
+      } else {
+        callback();
+      }
+    };
     return {
-      registerForm: {
-        email: '',
-        name: '',
-        password: '',
-        password_confirmation: '',
+      loginForm: {
+        email: 'admin@laravue.dev',
+        password: 'laravue',
+      },
+      loginRules: {
+        email: [{ required: true, trigger: 'blur', validator: validateEmail }],
+        password: [{ required: true, trigger: 'blur', validator: validatePass }],
       },
       loading: false,
       pwdType: 'password',
@@ -95,6 +82,7 @@ export default {
   //   $route: {
   //     handler: function(route) {
   //       const query = route.query;
+  //       console.log('query', query);
   //       if (query) {
   //         this.redirect = query.redirect;
   //         this.otherQuery = this.getOtherQuery(query);
@@ -103,9 +91,6 @@ export default {
   //     immediate: true,
   //   },
   // },
-  mounted(){
-    console.log('mounted register');
-  },
   methods: {
     showPwd() {
       if (this.pwdType === 'password') {
@@ -114,21 +99,29 @@ export default {
         this.pwdType = 'password';
       }
     },
-    handleRegister() {
-      axios
-        .post('api/student-register', this.registerForm)
-        .then(response => {
-          console.log('response', response, this.registerForm);
-          this.$message({
-            message: 'Student ' + this.registerForm.name + ' has been registered successfully.',
-            type: 'success',
-            duration: 5 * 1000,
+    handleLogin() {
+      this.$refs.loginForm.validate(valid => {
+        if (valid) {
+          this.loading = true;
+          csrf().then(() => {
+            this.$store.dispatch('student/login', this.loginForm)
+              .then(() => {
+                this.$router.push({ path: this.redirect || '/', query: this.otherQuery }, onAbort => {});
+                this.loading = false;
+              })
+              .catch(() => {
+                this.loading = false;
+              });
           });
-          this.$router.push({ path: '/student-login' });          
-        })
-        .catch(error => {
-          showErrors(error);
-        });
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
+    },
+    handleStudentRegistration(){
+      console.log('handleStudentRegistration');
+      this.$router.push({ path: '/student-registration' })
     },
     // getOtherQuery(query) {
     //   return Object.keys(query).reduce((acc, cur) => {
@@ -147,7 +140,7 @@ $bg:#2d3a4b;
 $light_gray:#eee;
 
 /* reset element-ui css */
-.register-container {
+.login-container {
   .el-input {
     display: inline-block;
     height: 47px;
@@ -180,12 +173,12 @@ $light_gray:#eee;
 $bg:#2d3a4b;
 $dark_gray:#889aa4;
 $light_gray:#eee;
-.register-container {
+.login-container {
   position: fixed;
   height: 100%;
   width: 100%;
   background-color: $bg;
-  .register-form {
+  .login-form {
     position: absolute;
     left: 0;
     right: 0;
@@ -235,10 +228,10 @@ $light_gray:#eee;
   }
 }
 @media screen and (orientation:landscape) and (max-width:1024px) {
-  .register-container {
+  .login-container {
     position: relative;
     overflow-y: auto;
-    .register-form {
+    .login-form {
       transform: translate(-50%, -50%);
       left: 50%;
       top: 50%;
